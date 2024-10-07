@@ -1,7 +1,12 @@
 {
     "compilerOptions": {
         "jsx": "react",
-        "checkJs": true
+        "checkJs": true,
+        "paths": {
+            "@firebase/auth": [
+                "./node_modules/@firebase/auth/dist/index.rn.d.ts"
+            ]
+        }
     },
     "exclude": [
         "node_modules",
