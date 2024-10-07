@@ -1,13 +1,14 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { initializeApp, getApps } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, disableNetwork, enableNetwork } from 'firebase/firestore';
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { getAuth, getReactNativePersistence, initializeAuth } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
 import Start from './components/Start';
 import Chat from './components/Chat';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 const Stack = createNativeStackNavigator(); // TODO: #8 Move this into the component
 
@@ -22,7 +23,14 @@ export default function App() {
         measurementId: "G-H3W1V4E5M7"
     };
     const [analytics, setAnalytics] = React.useState(null);
+    const [isConnected, setIsConnected] = React.useState(true);
+    const connectionStatus = useNetInfo();
     let fbApp, fbAuth, fbMsgDb;
+
+    React.useEffect(() => {
+        setIsConnected(!!connectionStatus.isConnected);
+        (!!connectionStatus.isConnected) && fbMsgDb ? enableNetwork(fbMsgDb) : disableNetwork(fbMsgDb);
+    }, [connectionStatus.isConnected, fbMsgDb]);
 
     if (!getApps().length) {
         fbApp = initializeApp(firebaseConfig);
@@ -50,7 +58,7 @@ export default function App() {
                 <Stack.Screen name='Start' options={{ headerShown: false }}>
                     {props => <Start fbApp={fbApp} {...props} />}
                 </Stack.Screen>
-                <Stack.Screen name='Chat'>{props => <Chat database={fbMsgDb} {...props} />}</Stack.Screen>
+                <Stack.Screen name='Chat'>{props => <Chat database={fbMsgDb} isConnected={isConnected} {...props} />}</Stack.Screen>
             </Stack.Navigator>
         </NavigationContainer>
     );
