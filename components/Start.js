@@ -1,7 +1,9 @@
 import { View, StyleSheet, Text, TextInput, SafeAreaView, TouchableHighlight, Animated, ImageBackground } from 'react-native';
+import { getAuth, signInAnonymously } from "firebase/auth";
 import React from 'react';
 
-export default function Start({ navigation }) {
+export default function Start({ navigation, fbApp }) {
+    const auth = getAuth(fbApp);
     const [selectedColor, setSelectedColor] = React.useState(colors[2]);
     const [name, setName] = React.useState('');
 
@@ -26,12 +28,20 @@ export default function Start({ navigation }) {
                         })}
                     </View>
                 </View>
-                <TouchableHighlight style={styles.startChattingContainer} onPress={() => navigation.navigate('Chat', { name, selectedColor })}>
+                <TouchableHighlight style={styles.startChattingContainer} onPress={navigateToChat}>
                     <Text style={styles.startChatting}>Start Chatting</Text>
                 </TouchableHighlight>
             </SafeAreaView>
         </ImageBackground>
     );
+
+    function navigateToChat(event) {
+        signInAnonymously(auth).then(result => navigation.navigate('Chat', {
+            userID: result.user.uid,
+            name: name,
+            selectedColor: selectedColor
+        })).catch(error => console.error('Error signing in anonymously', error));
+    }
 }
 
 function Circle({ style, touched }) {

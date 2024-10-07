@@ -1,31 +1,25 @@
 import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import React from 'react';
 import { Bubble, GiftedChat } from 'react-native-gifted-chat';
+import { collection, addDoc, onSnapshot, query, where, orderBy, Timestamp } from "firebase/firestore";
 
-export default function Chat({ route, navigation }) {
+export default function Chat({ route, navigation, database }) {
     const name = route.params.name;
     const backgroundColor = route.params.selectedColor;
+    const uid = route.params.userID;
     const [messages, setMessages] = React.useState([]);
-    const onSend = (newMessages) => setMessages(previousMessages => GiftedChat.append(previousMessages, newMessages));
+    const onSend = (newMessages) => addDoc(collection(database, 'messages'), newMessages[0]);
     React.useEffect(() => {
-        setMessages([
-            {
-                _id: 1,
-                text: 'Hello, world!',
-                createdAt: new Date(),
-                user: {
-                    _id: 2,
-                    name: 'Alan Turing',
-                    avatar: 'https://placeimg.com/140/140/any'
-                }
-            },
-            {
-                _id: 2,
-                text: 'This is a system message',
-                createdAt: new Date(),
-                system: true
-            }
-        ]);
+        const unsubscribeMessages = onSnapshot(query(collection(database, 'messages'), orderBy("createdAt", "desc")), messagesSnapshot => {
+            let newMessages = [];
+            messagesSnapshot.forEach(message => {
+                const messageData = message.data();
+                messageData.createdAt = new Timestamp(messageData.createdAt.seconds, messageData.createdAt.nanoseconds).toDate();
+                newMessages.push({ id: message.id, ...messageData });
+            });
+            setMessages(newMessages);
+            return () => { if (unsubscribeMessages) unsubscribeMessages() };
+        });
     }, []);
     React.useEffect(() => {
         if (name && navigation) navigation.setOptions({
@@ -35,8 +29,8 @@ export default function Chat({ route, navigation }) {
     }, [navigation, name, backgroundColor]);
     return (
         <View style={[styles.container, { backgroundColor }]}>
-            <GiftedChat messages={messages} renderBubble={renderBubble} onSend={onSend} user={{ _id: 1 }} />
-            {Platform.OS === 'android' && <KeyboardAvoidingView behavior='height' />}
+            <GiftedChat messages={messages} renderBubble={renderBubble} onSend={onSend} user={{ _id: uid, name: name }} />
+            {Platform.OS === 'android' ? <KeyboardAvoidingView behavior='height' /> : null}
         </View>
     );
 }
