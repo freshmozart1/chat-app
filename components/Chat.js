@@ -1,16 +1,67 @@
 import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Bubble, GiftedChat, InputToolbar } from 'react-native-gifted-chat';
 import { collection, addDoc, onSnapshot, query, where, orderBy, Timestamp } from "firebase/firestore";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import MapView from 'react-native-maps';
+import CustomActions from './CustomActions';
 
 export default function Chat({ route, navigation, database, isConnected }) {
-    const name = route.params.name;
-    const backgroundColor = route.params.selectedColor;
-    const uid = route.params.userID;
-    const [messages, setMessages] = React.useState([]);
-    const onSend = (newMessages) => addDoc(collection(database, 'messages'), newMessages[0]);
-    React.useEffect(() => {
+    const { name, selectedColor: backgroundColor, userID } = route?.params,
+        [messages, setMessages] = React.useState([]),
+
+        onSend = (newMessages) => {
+            addDoc(collection(database, 'messages'), newMessages[0]);
+        },
+
+        renderInputToolbar = (props) => {
+            return isConnected ? <InputToolbar {...props} /> : null;
+        },
+
+        renderBubble = (props) => {
+            return (
+                <Bubble {...props} wrapperStyle={{
+                    right: {
+                        backgroundColor: '#000' // TODO #14
+                    },
+                    left: {
+                        backgroundColor: '#fff' // TODO #14
+                    }
+                }} />
+            );
+        },
+
+        renderCustomActions = (props) => {
+            let messageId;
+            do {
+                messageId = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                    const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            } while (messages.some(message => message._id === messageId)); // find a unique UUID
+            return <CustomActions onSend={onSend} user={{
+                _id: userID,
+                name: name,
+                avatar: 'https://placeimg.com/140/140/any' // TODO #13
+            }} messageId={messageId} {...props} />;
+        },
+
+        renderCustomView = (props) => {
+            const { location } = props?.currentMessage;
+            if (location) {
+                return (
+                    <MapView style={{ width: 150, height: 100, borderRadius: 13, margin: 3 }} region={{
+                        latitude: location.latitude,
+                        longitude: location.longitude,
+                        latitudeDelta: 0.0922,
+                        longitudeDelta: 0.0421
+                    }} />
+                );
+            }
+        };
+
+
+    useEffect(() => {
         if (isConnected) {
             const unsubscribeMessages = onSnapshot(query(collection(database, 'messages'), orderBy("createdAt", "desc")), messagesSnapshot => {
                 let newMessages = [];
@@ -30,38 +81,23 @@ export default function Chat({ route, navigation, database, isConnected }) {
             }).catch(error => console.error('Error retrieving messages from AsyncStorage', error));
         }
     }, []);
-    React.useEffect(() => {
+
+    useEffect(() => {
         if (name && navigation) navigation.setOptions({
-            title: name,
-            backgroundColor: backgroundColor
+            title: name
         });
-    }, [navigation, name, backgroundColor]);
-
-    const renderInputToolbar = (props) => {
-        return isConnected ? <InputToolbar {...props} /> : null;
-    };
-
-    const renderBubble = (props) => {
-        return (
-            <Bubble {...props} wrapperStyle={{
-                right: {
-                    backgroundColor: '#000'
-                },
-                left: {
-                    backgroundColor: '#fff'
-                }
-            }} />
-        );
-    };
+    }, [navigation, name]);
 
     return (
-        <View style={[styles.container, { backgroundColor }]}>
+        <View style={{ flex: 1, backgroundColor }}>
             <GiftedChat
                 messages={messages}
                 renderBubble={renderBubble}
                 renderInputToolbar={renderInputToolbar}
                 onSend={onSend}
-                user={{ _id: uid, name: name }}
+                renderActions={renderCustomActions}
+                renderCustomView={renderCustomView}
+                user={{ _id: userID, name: name }}
             />
             {Platform.OS === 'android' ? <KeyboardAvoidingView behavior='height' /> : null}
         </View>
