@@ -16,7 +16,7 @@ export default function CustomActions({ wrapperStyle, iconTextStyle, onSend, use
                         pickImage();
                         return;
                     case 1:
-                        // takePhoto();
+                        takePhoto();
                         return;
                     case 2:
                         getLocation();
@@ -65,6 +65,28 @@ export default function CustomActions({ wrapperStyle, iconTextStyle, onSend, use
                     user: user,
                     imageURL // The gifted chat image viewer is not working, so I decided to use a custom image viewer
                 }]);
+            }
+        },
+
+        takePhoto = async () => {
+            let permissions = await ImagePicker.requestCameraPermissionsAsync();
+            if (permissions?.granted) {
+                let result = await ImagePicker.launchCameraAsync();
+                if (!result.canceled) {
+                    const imageURI = result.assets[0].uri;
+                    const image = await fetch(imageURI);
+                    const imageBlob = await image.blob();
+                    const storageRef = ref(storage, `images/${messageId}`); // I took the messageId, because it links the image to the message
+                    const uploadResult = await uploadBytes(storageRef, imageBlob);
+                    const imageURL = await getDownloadURL(uploadResult.ref);
+                    onSend([{
+                        _id: messageId,
+                        text: '',
+                        createdAt: new Date(),
+                        user: user,
+                        imageURL // The gifted chat image viewer is not working, so I decided to use a custom image viewer
+                    }]);
+                }
             }
         };
 
