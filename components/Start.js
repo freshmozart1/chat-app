@@ -7,7 +7,6 @@ export default function Start({ navigation, fbApp }) {
     const colors = ['#090C08', '#474056', '#8A95A5', '#B9C6AE'];
     const [selectedColor, setSelectedColor] = useState(colors[2]);
     const [name, setName] = useState('');
-    const [keyboardVisible, setKeyboardVisible] = useState(false);
     const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
     const animateHeaderHeight = useRef(new Animated.Value(screenHeight / 2)).current;
     const animateInputContainerHeight = useRef(new Animated.Value(screenHeight / 100 * 44)).current;
@@ -97,7 +96,6 @@ export default function Start({ navigation, fbApp }) {
 
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => {
-            setKeyboardVisible(true);
             startAnimations([
                 { animatedValue: animateHeaderHeight, toValue: 0 },
                 { animatedValue: animateInputContainerHeight, toValue: screenHeight - e.endCoordinates.height },
@@ -107,7 +105,6 @@ export default function Start({ navigation, fbApp }) {
             ]);
         });
         const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-            setKeyboardVisible(false);
             startAnimations([
                 { animatedValue: animateHeaderHeight, toValue: screenHeight / 2 },
                 { animatedValue: animateInputContainerHeight, toValue: screenHeight / 100 * 44 },
