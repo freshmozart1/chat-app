@@ -5,7 +5,7 @@ import { getStorage } from 'firebase/storage';
 import { getFirestore, disableNetwork, enableNetwork } from 'firebase/firestore';
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { getAuth, getReactNativePersistence, initializeAuth } from 'firebase/auth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
 import Start from './components/Start';
 import Chat from './components/Chat';
@@ -37,7 +37,7 @@ export default function App() {
     if (!getApps().length) {
         fbApp = initializeApp(firebaseConfig);
         fbAuth = initializeAuth(fbApp, {
-            persistence: getReactNativePersistence(AsyncStorage)
+            persistence: getReactNativePersistence(ReactNativeAsyncStorage)
         });
         fbMsgDb = getFirestore(fbApp);
     } else {
