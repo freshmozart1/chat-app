@@ -1,7 +1,7 @@
-import { View, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity, Image } from 'react-native';
+import { View, KeyboardAvoidingView, Platform, TouchableOpacity, Image } from 'react-native';
 import React, { useEffect } from 'react';
 import { Bubble, GiftedChat, InputToolbar } from 'react-native-gifted-chat';
-import { collection, addDoc, onSnapshot, query, where, orderBy, Timestamp } from "firebase/firestore";
+import { collection, addDoc, onSnapshot, query, orderBy, Timestamp } from "firebase/firestore";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MapView from 'react-native-maps';
 import CustomActions from './CustomActions';
@@ -91,11 +91,24 @@ export default function Chat({ route, navigation, database, storage, isConnected
                 return () => { if (unsubscribeMessages) unsubscribeMessages() };
             });
         } else {
+
             AsyncStorage.getItem('messages').then(messages => {
                 if (messages) setMessages(JSON.parse(messages));
             }).catch(error => console.error('Error retrieving messages from AsyncStorage', error));
         }
     }, []);
+
+    useEffect(() => {
+        if (!isConnected) {
+            const systemMessage = {
+                _id: 'system-message',
+                text: 'You are offline, please check your network connection.',
+                createdAt: new Date(),
+                system: true
+            };
+            setMessages(previousMessages => GiftedChat.append(previousMessages, [systemMessage]));
+        }
+    }, [isConnected]);
 
     useEffect(() => {
         if (name && navigation) navigation.setOptions({
