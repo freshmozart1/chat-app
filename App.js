@@ -1,6 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { initializeApp, getApps } from 'firebase/app';
+import { getStorage } from 'firebase/storage';
 import { getFirestore, disableNetwork, enableNetwork } from 'firebase/firestore';
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { getAuth, getReactNativePersistence, initializeAuth } from 'firebase/auth';
@@ -8,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React from 'react';
 import Start from './components/Start';
 import Chat from './components/Chat';
+import ImageView from './components/ImageView';
 import { useNetInfo } from '@react-native-community/netinfo';
 
 const Stack = createNativeStackNavigator(); // TODO: #8 Move this into the component
@@ -25,7 +27,7 @@ export default function App() {
     const [analytics, setAnalytics] = React.useState(null);
     const [isConnected, setIsConnected] = React.useState(true);
     const connectionStatus = useNetInfo();
-    let fbApp, fbAuth, fbMsgDb;
+    let fbApp, fbAuth, fbMsgDb, fbStorage;
 
     React.useEffect(() => {
         setIsConnected(!!connectionStatus.isConnected);
@@ -42,6 +44,7 @@ export default function App() {
         fbApp = getApps()[0];
         fbAuth = getAuth(fbApp);
         fbMsgDb = getFirestore(fbApp);
+        fbStorage = getStorage(fbApp);
     }
 
     isSupported().then((supported) => {
@@ -58,7 +61,12 @@ export default function App() {
                 <Stack.Screen name='Start' options={{ headerShown: false }}>
                     {props => <Start fbApp={fbApp} {...props} />}
                 </Stack.Screen>
-                <Stack.Screen name='Chat'>{props => <Chat database={fbMsgDb} isConnected={isConnected} {...props} />}</Stack.Screen>
+                <Stack.Screen name='Chat'>
+                    {props => <Chat database={fbMsgDb} storage={fbStorage} isConnected={isConnected} {...props} />}
+                </Stack.Screen>
+                <Stack.Screen name='ImageView'>
+                    {props => <ImageView {...props} />}
+                </Stack.Screen>
             </Stack.Navigator>
         </NavigationContainer>
     );
