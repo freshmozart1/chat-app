@@ -16,13 +16,13 @@ const Stack = createNativeStackNavigator(); // TODO: #8 Move this into the compo
 
 export default function App() {
     const firebaseConfig = { // TODO: #9 Move this to a .env file
-        apiKey: "AIzaSyDRSxeQUA8YVYvnVHWJhot2qCQpCPKfFMk",
-        authDomain: "chat-app-f2fc3.firebaseapp.com",
-        projectId: "chat-app-f2fc3",
-        storageBucket: "chat-app-f2fc3.appspot.com",
-        messagingSenderId: "386183351873",
-        appId: "1:386183351873:web:c61abc0b438bbf7aba00c0",
-        measurementId: "G-H3W1V4E5M7"
+        apiKey: process.env.FB_API_KEY,
+        authDomain: process.env.FB_AUTH_DOMAIN,
+        projectId: process.env.FB_PROJECT_ID,
+        storageBucket: process.env.FB_STORAGE_BUCKET,
+        messagingSenderId: process.env.FB_MESSAGING_SENDER_ID,
+        appId: process.env.FB_APP_ID,
+        measurementId: process.env.FB_MEASUREMENT_ID
     };
     const [analytics, setAnalytics] = React.useState(null);
     const [isConnected, setIsConnected] = React.useState(true);
