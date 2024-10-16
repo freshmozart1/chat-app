@@ -25,23 +25,17 @@ export default function Start({ navigation, fbApp }) {
     const auth = getAuth(fbApp); //TODO: #16 Add as prop
 
     /**
-     * An array of color hex codes that can be selected as the background color of the chat screen.
-     * @type {string[]}
+     * @constant {string[]} colors - An array of color hex codes that can be selected as the background color of the chat screen.
      */
     const colors = ['#090C08', '#474056', '#8A95A5', '#B9C6AE'];
 
     /**
-     * State hook for managing the selected color.
-     * Initializes with the third color from the colors array.
-     *
-     * @type {[string, React.Dispatch<React.SetStateAction<string>>]} selectedColor - The current selected color and a function to update it.
+     * @constant {[string, React.Dispatch<React.SetStateAction<string>>]} selectedColor - The current selected background color and a function to update it.
      */
     const [selectedColor, setSelectedColor] = useState(colors[2]);
 
     /**
-     * State hook for managing the user's name.
-     * 
-     * @type {[string, React.Dispatch<React.SetStateAction<string>>]} name - The current user's name and a function to update it.
+     * @constant {[string, React.Dispatch<React.SetStateAction<string>>]} name - The current user's name and a function to update it.
      */
     const [name, setName] = useState('');
 
@@ -55,7 +49,7 @@ export default function Start({ navigation, fbApp }) {
      * A reference to an animated value representing the height of the header.
      * Initialized to half of the screen height.
      * 
-     * @constant {Animated.Value} animateHeaderHeight - The animated value for the header height.
+     * @constant {Animated.Value} animateHeaderHeight
      */
     const animateHeaderHeight = useRef(new Animated.Value(screenHeight / 2)).current;
 
@@ -87,7 +81,7 @@ export default function Start({ navigation, fbApp }) {
      * A reference to an animated value representing the font size of the title.
      * Initialized with a starting value of 45.
      * 
-     * @type {Animated.Value}
+     * @constant {Animated.Value} animateTitleFontSize
      */
     const animateTitleFontSize = useRef(new Animated.Value(45)).current;
 
