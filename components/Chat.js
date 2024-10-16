@@ -157,8 +157,7 @@ export default function Chat({ route, navigation, database, storage, isConnected
             user={
                 {
                     _id: userID,
-                    name: name,
-                    avatar: 'https://placeimg.com/140/140/any' // TODO #13
+                    name: name
                 }
             }
             messageId={messageId}
