@@ -1,19 +1,103 @@
-import { Dimensions, Keyboard, KeyboardAvoidingView, Platform, View, StyleSheet, Text, TextInput, SafeAreaView, TouchableHighlight, Animated, ImageBackground } from 'react-native';
+import { Dimensions, Keyboard, KeyboardAvoidingView, Platform, View, StyleSheet, Text, TextInput, TouchableHighlight, Animated, ImageBackground } from 'react-native';
 import { getAuth, signInAnonymously } from "firebase/auth";
 import React, { useEffect, useState, useRef } from 'react';
 
+/**
+ * Chat component for the chat application.
+ * 
+ * @component
+ * @param {Object} props - The component props.
+ * @param {import('@react-navigation/native').NavigationProp<any>} props.navigation - The navigation object for navigating between screens.
+ * @param {import('firebase/app').FirebaseApp} props.fbApp - The Firebase app instance.
+ * 
+ * @returns {React.JSX.Element} The rendered Start component.
+ * 
+ * @description
+ * This component renders the start screen of the chat application. It includes an animated header,
+ * an input field for the user's name, a selection of background colors, and a button to start chatting.
+ * The component handles keyboard events to adjust the layout when the keyboard is shown or hidden.
+ * 
+ * @function Start
+ * 
+ * @requires react
+ * @requires react-native
+ * @requires firebase/auth
+ */
 export default function Start({ navigation, fbApp }) {
-    const auth = getAuth(fbApp);
+    const auth = getAuth(fbApp); //TODO: #16 Add as prop
+
+    /**
+     * An array of color hex codes that can be selected as the background color of the chat screen.
+     * @type {string[]}
+     */
     const colors = ['#090C08', '#474056', '#8A95A5', '#B9C6AE'];
+
+    /**
+     * State hook for managing the selected color.
+     * Initializes with the third color from the colors array.
+     *
+     * @type {[string, React.Dispatch<React.SetStateAction<string>>]} selectedColor - The current selected color and a function to update it.
+     */
     const [selectedColor, setSelectedColor] = useState(colors[2]);
+
+    /**
+     * State hook for managing the user's name.
+     * 
+     * @type {[string, React.Dispatch<React.SetStateAction<string>>]} name - The current user's name and a function to update it.
+     */
     const [name, setName] = useState('');
+
+    /**
+     * @constant {number} screenHeight - The height of the device's screen.
+     * @constant {number} screenWidth - The width of the device's screen.
+     */
     const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
+
+    /**
+     * A reference to an animated value representing the height of the header.
+     * Initialized to half of the screen height.
+     * 
+     * @constant {Animated.Value} animateHeaderHeight - The animated value for the header height.
+     */
     const animateHeaderHeight = useRef(new Animated.Value(screenHeight / 2)).current;
+
+    /**
+     * A reference to an animated value representing the height of the input container.
+     * The initial height is set to 44% of the screen height.
+     * 
+     * @constant {Animated.Value} animateInputContainerHeight
+     */
     const animateInputContainerHeight = useRef(new Animated.Value(screenHeight / 100 * 44)).current;
+
+    /**
+     * A reference to an animated value representing the width of the input container.
+     * The initial width is set to 88% of the screen width.
+     * 
+     * @constant {Animated.Value} animateInputContainerWidth
+     */
     const animateInputContainerWidth = useRef(new Animated.Value(screenWidth / 100 * 88)).current;
+
+    /**
+     * A reference to an animated value representing the margin of the input container.
+     * The initial value is set to 3% of the screen height.
+     * 
+     * @constant {Animated.Value} animateInputContainerMargin
+     */
     const animateInputContainerMargin = useRef(new Animated.Value(screenHeight / 100 * 3)).current;
+
+    /**
+     * A reference to an animated value representing the font size of the title.
+     * Initialized with a starting value of 45.
+     * 
+     * @type {Animated.Value}
+     */
     const animateTitleFontSize = useRef(new Animated.Value(45)).current;
 
+    /**
+     * Styles for the Start component.
+     * 
+     * @constant {StyleSheet} styles
+     */
     const styles = StyleSheet.create({
         container: {
             height: '100%',
@@ -84,16 +168,6 @@ export default function Start({ navigation, fbApp }) {
         }
     });
 
-    const startAnimations = (animations = []) => {
-        for (let { animatedValue, toValue } of animations) {
-            Animated.timing(animatedValue, {
-                toValue: toValue,
-                duration: 50,
-                useNativeDriver: false
-            }).start();
-        }
-    };
-
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e) => {
             startAnimations([
@@ -118,6 +192,42 @@ export default function Start({ navigation, fbApp }) {
             keyboardDidShowListener.remove();
         }
     }, []);
+
+    /**
+     * @typedef {Object} Animation
+     * @property {Animated.Value} animatedValue - The animated value to be animated.
+     * @property {number} toValue - The target value for the animation.
+     * 
+     * @private
+     * @function startAnimations
+     * @param {Animation[]} animations 
+     * @description Starts the animations for the provided animated values.
+     * @returns {void}
+     */
+    function startAnimations(animations = []) {
+        for (let { animatedValue, toValue } of animations) {
+            Animated.timing(animatedValue, {
+                toValue: toValue,
+                duration: 50,
+                useNativeDriver: false
+            }).start();
+        }
+    };
+
+    /**
+     * @private
+     * @function navigateToChat
+     * @param {import('react-native').GestureResponderEvent} event
+     * @description Navigates to the chat screen with the user's name and selected background color.
+     * @returns {void}
+     */
+    function navigateToChat(event) {
+        signInAnonymously(auth).then(result => navigation.navigate('Chat', {
+            userID: result.user.uid,
+            name: name,
+            selectedColor: selectedColor
+        })).catch(error => console.error('Error signing in anonymously', error));
+    }
 
     return (
         <ImageBackground source={require(
@@ -148,14 +258,6 @@ export default function Start({ navigation, fbApp }) {
             </KeyboardAvoidingView>
         </ImageBackground>
     );
-
-    function navigateToChat(event) {
-        signInAnonymously(auth).then(result => navigation.navigate('Chat', {
-            userID: result.user.uid,
-            name: name,
-            selectedColor: selectedColor
-        })).catch(error => console.error('Error signing in anonymously', error));
-    }
 }
 
 function Circle({ style, touched }) {
