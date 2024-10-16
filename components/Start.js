@@ -3,23 +3,23 @@ import { getAuth, signInAnonymously } from "firebase/auth";
 import React, { useEffect, useState, useRef } from 'react';
 
 /**
- * @component
- * @param {Object} props - The component props.
- * @param {import('@react-navigation/native').NavigationProp<any>} props.navigation - The navigation object for navigating between screens.
- * @param {import('firebase/app').FirebaseApp} props.fbApp - The Firebase app instance.
+ * @typedef {Object} StartProps
+ * @property {import('@react-navigation/native').NavigationProp<any>} navigation - The navigation object for navigating between screens.
+ * @property {import('firebase/app').FirebaseApp} fbApp - The Firebase app instance.
  * 
- * @returns {React.JSX.Element} The rendered Start component.
+ * @component
+ * @param {StartProps} props
+ * 
+ * @requires react
+ * @requires react-native
+ * @requires firebase/auth
+ * 
+ * @returns {React.JSX.Element}
  * 
  * @description
  * This component renders the start screen of the chat application. It includes an animated header,
  * an input field for the user's name, a selection of background colors, and a button to start chatting.
  * The component handles keyboard events to adjust the layout when the keyboard is shown or hidden.
- * 
- * @function Start
- * 
- * @requires react
- * @requires react-native
- * @requires firebase/auth
  */
 export default function Start({ navigation, fbApp }) {
     const auth = getAuth(fbApp); //TODO: #16 Add as prop
