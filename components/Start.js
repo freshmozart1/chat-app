@@ -3,8 +3,6 @@ import { getAuth, signInAnonymously } from "firebase/auth";
 import React, { useEffect, useState, useRef } from 'react';
 
 /**
- * Chat component for the chat application.
- * 
  * @component
  * @param {Object} props - The component props.
  * @param {import('@react-navigation/native').NavigationProp<any>} props.navigation - The navigation object for navigating between screens.
@@ -229,6 +227,60 @@ export default function Start({ navigation, fbApp }) {
         })).catch(error => console.error('Error signing in anonymously', error));
     }
 
+    /**
+     * @typedef {Object} CircleProps
+     * @property {Object} style - Additional styles for the circle container.
+     * @property {boolean} touched - Flag indicating whether the circle is touched.
+     * 
+     * @private
+     * @function Circle
+     * @param {CircleProps} props - The properties object.
+     * @returns {React.JSX.Element} The Circle component.
+     */
+    function Circle({ style, touched }) {
+
+        /**
+         * A reference to a new animated value that starts at 0 and controls the opacity of the circle.
+         * 
+         * @private
+         * @constant {Animated.Value} fadeAnim
+         */
+        const fadeAnim = useRef(new Animated.Value(0)).current;
+
+        useEffect(() => {
+            if (touched) {
+                Animated.timing(fadeAnim, {
+                    toValue: 1,
+                    duration: 500,
+                    useNativeDriver: true
+                }).start();
+            } else {
+                fadeAnim.setValue(0);
+            }
+        }, [touched, fadeAnim]);
+
+        return (
+            <View style={{
+                flexDirection: 'row',
+                width: 50,
+                height: 50,
+                borderRadius: 25,
+                justifyContent: 'center',
+                alignItems: 'center',
+                ...style
+            }}>
+                {touched && <Animated.View style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 20,
+                    borderWidth: 2,
+                    borderColor: 'white',
+                    opacity: fadeAnim
+                }} />}
+            </View>
+        );
+    }
+
     return (
         <ImageBackground source={require(
             // @ts-ignore
@@ -257,41 +309,5 @@ export default function Start({ navigation, fbApp }) {
                 </Animated.View>
             </KeyboardAvoidingView>
         </ImageBackground>
-    );
-}
-
-function Circle({ style, touched }) {
-    const fadeAnim = useRef(new Animated.Value(0)).current;
-    useEffect(() => {
-        if (touched) {
-            Animated.timing(fadeAnim, {
-                toValue: 1,
-                duration: 500,
-                useNativeDriver: true
-            }).start();
-        } else {
-            fadeAnim.setValue(0);
-        }
-    }, [touched, fadeAnim]);
-
-    return (
-        <View style={{
-            flexDirection: 'row',
-            width: 50,
-            height: 50,
-            borderRadius: 25,
-            justifyContent: 'center',
-            alignItems: 'center',
-            ...style
-        }}>
-            {touched && <Animated.View style={{
-                width: 40,
-                height: 40,
-                borderRadius: 20,
-                borderWidth: 2,
-                borderColor: 'white',
-                opacity: fadeAnim
-            }} />}
-        </View>
     );
 }
