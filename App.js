@@ -129,7 +129,7 @@ export default function App() {
      * @private
      * @function openStart
      * @param {Object} params - The parameters object.
-     * @param {any} params.navigation - The navigation object used for navigating between screens.
+     * @param {import('@react-navigation/native').NavigationProp<any>} params.navigation - The navigation object used for navigating between screens.
      * @returns {React.JSX.Element} The Start component with the provided props.
      */
     function openStart({ navigation }) {
