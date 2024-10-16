@@ -2,7 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { initializeApp, getApps } from 'firebase/app';
 import { getStorage } from 'firebase/storage';
-import { getFirestore, disableNetwork, enableNetwork } from 'firebase/firestore';
+import { getFirestore, disableNetwork, enableNetwork, Firestore } from 'firebase/firestore';
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { getAuth, getReactNativePersistence, initializeAuth } from 'firebase/auth';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
@@ -14,8 +14,19 @@ import { useNetInfo } from '@react-native-community/netinfo';
 
 const Stack = createNativeStackNavigator(); // TODO: #8 Move this into the component
 
+/**
+ * The main application component that initializes Firebase, sets up network status monitoring,
+ * and configures the navigation stack.
+ *
+ * @returns {JSX.Element} The main application component with navigation setup.
+ */
 export default function App() {
-    const firebaseConfig = { // TODO: #9 Move this to a .env file
+    /**
+     * Firebase configuration object containing keys and identifiers for the app.
+     * 
+     * @constant {import('firebase/app').FirebaseOptions} firebaseConfig
+     */
+    const firebaseConfig = {
         apiKey: process.env.FB_API_KEY,
         authDomain: process.env.FB_AUTH_DOMAIN,
         projectId: process.env.FB_PROJECT_ID,
@@ -24,15 +35,47 @@ export default function App() {
         appId: process.env.FB_APP_ID,
         measurementId: process.env.FB_MEASUREMENT_ID
     };
+    /**
+     * @typedef {import('firebase/analytics').Analytics} Analytics
+     * @type {[Analytics|null, React.Dispatch<React.SetStateAction<Analytics>>]} analytics - The current state of analytics data and a function to update it.
+     */
     const [analytics, setAnalytics] = React.useState(null);
-    const [isConnected, setIsConnected] = React.useState(true);
+
+    /**
+     * @constant {import('@react-native-community/netinfo').NetInfoState} connectionStatus - The current network connection status.
+     */
     const connectionStatus = useNetInfo();
-    let fbApp, fbAuth, fbMsgDb, fbStorage;
+
+
+    /**
+     * @type {import('firebase/app').FirebaseApp} fbApp - The Firebase application instance.
+     */
+    let fbApp;
+
+    /**
+     * @type {import('firebase/auth').Auth} fbAuth - The Firebase authentication instance.
+     */
+    let fbAuth;
+
+    /**
+     * A reference to the Firebase Realtime Database for messages.
+     * This variable is used to interact with the messages stored in the Firebase database.
+     * 
+     * @type {Firestore}
+     */
+    let fbMsgDb;
+
+
+    /**
+     * A variable to hold a reference to Firebase Storage.
+     * 
+     * @type {import('firebase/storage').FirebaseStorage}
+     */
+    let fbStorage;
 
     React.useEffect(() => {
-        setIsConnected(!!connectionStatus.isConnected);
-        (!!connectionStatus.isConnected) && fbMsgDb ? enableNetwork(fbMsgDb) : disableNetwork(fbMsgDb);
-    }, [connectionStatus.isConnected, fbMsgDb]);
+        connectionStatus.isConnected && connectionStatus.isInternetReachable && fbMsgDb ? enableNetwork(fbMsgDb) : disableNetwork(fbMsgDb);
+    }, [connectionStatus.isConnected, connectionStatus.isInternetReachable, fbMsgDb]);
 
     if (!getApps().length) {
         fbApp = initializeApp(firebaseConfig);
@@ -55,6 +98,20 @@ export default function App() {
         console.error('Error initializing Firebase Analytics', error);
     });
 
+    /**
+     * Opens the chat screen with the provided route and navigation props.
+     *
+     * @param {Object} props - The parameters for the function.
+     * @param {Object} props.route - The route object containing navigation information.
+     * @param {Object} props.navigation - The navigation object for navigating between screens.
+     * @returns {JSX.Element} The Chat component with the provided props.
+     */
+    function openChat({ route, navigation }) {
+        return (
+            <Chat database={fbMsgDb} storage={fbStorage} isConnected={connectionStatus.isConnected && connectionStatus.isInternetReachable} route={route} navigation={navigation} />
+        );
+    }
+
     return (
         <NavigationContainer>
             <Stack.Navigator initialRouteName='Start'>
@@ -62,7 +119,7 @@ export default function App() {
                     {props => <Start fbApp={fbApp} {...props} />}
                 </Stack.Screen>
                 <Stack.Screen name='Chat'>
-                    {props => <Chat database={fbMsgDb} storage={fbStorage} isConnected={isConnected} {...props} />}
+                    {props => openChat(props)}
                 </Stack.Screen>
                 <Stack.Screen name='ImageView'>
                     {props => <ImageView {...props} />}
