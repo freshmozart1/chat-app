@@ -18,9 +18,23 @@ const Stack = createNativeStackNavigator(); // TODO: #8 Move this into the compo
  * The main application component that initializes Firebase, sets up network status monitoring,
  * and configures the navigation stack.
  *
- * @public
- * @function App
- * @returns {React.ReactElement} The main application component with navigation setup.
+ * @component App
+ * 
+ * @requires react
+ * @requires '@react-navigation/native'
+ * @requires '@react-navigation/native-stack'
+ * @requires firebase/app
+ * @requires firebase/storage
+ * @requires firebase/firestore
+ * @requires firebase/analytics
+ * @requires firebase/auth
+ * @requires '@react-native-async-storage/async-storage'
+ * @requires './components/Start'
+ * @requires './components/Chat'
+ * @requires './components/ImageView'
+ * @requires '@react-native-community/netinfo'
+ * 
+ * @returns {React.JSX.Element}
  */
 export default function App() {
     /**

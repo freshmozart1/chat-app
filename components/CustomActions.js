@@ -5,6 +5,27 @@ import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
+/**
+ * CustomActions component provides a button that, when pressed, displays an action sheet with options to choose from library, take picture, send location, or cancel.
+ * 
+ * @component
+ * @param {Object} props - The properties object.
+ * @param {import("react-native").StyleProp<import("react-native").ViewStyle>} props.wrapperStyle - Custom styles for the wrapper.
+ * @param {import("react-native").StyleProp<import("react-native").TextStyle>} props.iconTextStyle - Custom styles for the icon text.
+ * @param {Function} props.onSend - Function to send the selected action result.
+ * @param {{_id: string, name: string}} props.user - The user object containing user details.
+ * @param {string} props.messageId - The unique identifier for the message.
+ * @param {import("firebase/storage").FirebaseStorage} props.storage - The storage object for handling image uploads.
+ * 
+ * @requires react
+ * @requires react-native
+ * @requires '@expo/react-native-action-sheet'
+ * @requires expo-location
+ * @requires expo-image-picker
+ * @requires firebase/storage
+ * 
+ * @returns {React.JSX.Element}
+ */
 export default function CustomActions({ wrapperStyle, iconTextStyle, onSend, user, messageId, storage }) {
 
     /**

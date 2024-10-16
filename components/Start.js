@@ -6,6 +6,11 @@ import React, { useEffect, useState, useRef } from 'react';
  * @typedef {Object} StartProps
  * @property {import('@react-navigation/native').NavigationProp<any>} navigation - The navigation object for navigating between screens.
  * @property {import('firebase/app').FirebaseApp} fbApp - The Firebase app instance.
+ */
+/**
+ * This component renders the start screen of the chat application. It includes an animated header,
+ * an input field for the user's name, a selection of background colors, and a button to start chatting.
+ * The component handles keyboard events to adjust the layout when the keyboard is shown or hidden.
  * 
  * @component
  * @param {StartProps} props
@@ -16,10 +21,6 @@ import React, { useEffect, useState, useRef } from 'react';
  * 
  * @returns {React.JSX.Element}
  * 
- * @description
- * This component renders the start screen of the chat application. It includes an animated header,
- * an input field for the user's name, a selection of background colors, and a button to start chatting.
- * The component handles keyboard events to adjust the layout when the keyboard is shown or hidden.
  */
 export default function Start({ navigation, fbApp }) {
     const auth = getAuth(fbApp); //TODO: #16 Add as prop

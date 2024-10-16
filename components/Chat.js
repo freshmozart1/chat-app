@@ -34,7 +34,9 @@ import CustomActions from './CustomActions';
  * @property {Firestore} database
  * @property {Storage} storage
  * @property {Boolean} isConnected
- *
+ */
+/** Chat component provides a chat interface for users to send and receive messages
+ * 
  * @component
  * @param {ChatProps} props
  * 
@@ -42,7 +44,7 @@ import CustomActions from './CustomActions';
  * @requires react-native
  * @requires react-native-gifted-chat
  * @requires firebase/firestore
- * @requires @react-native-async-storage/async-storage
+ * @requires '@react-native-async-storage/async-storage'
  * @requires react-native-maps
  * @requires ./CustomActions
  * 
