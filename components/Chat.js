@@ -11,48 +11,41 @@ import CustomActions from './CustomActions';
  * @property {String} name
  * @property {String} selectedColor
  * @property {String} userID
- */
-
-/**
+ * 
  * @typedef {import('@react-navigation/native').RouteProp<{ Chat: ChatRouteParams }, 'Chat'>} ChatRouteProp
- */
-
-/**
+ *
  * @typedef {import('firebase/storage').FirebaseStorage} Storage
- */
-
-/**
+ *
  * @typedef {import('react-native-gifted-chat').IMessage} Message
- */
-
-/**
+ *
  * @typedef {import('react-native-gifted-chat').BubbleProps<Message & CustomMessage>} BubbleProps
- */
-
-/**
+ *
  * @typedef {Object} CustomMessage
  * @property {Location} location?
  * @property {string} imageURL?
- */
-
-/**
+ *
  * @typedef {Object} Location
  * @property {number} latitude
  * @property {number} longitude
- */
-
-/**
+ *
  * @typedef {Object} ChatProps
  * @property {ChatRouteProp} route
  * @property {import('@react-navigation/native').NavigationProp<any>} navigation
  * @property {Firestore} database
  * @property {Storage} storage
  * @property {Boolean} isConnected
- */
-
-/**
- * @function Chat
- * @param {ChatProps} configuration 
+ *
+ * @component
+ * @param {ChatProps} props
+ * 
+ * @requires react
+ * @requires react-native
+ * @requires react-native-gifted-chat
+ * @requires firebase/firestore
+ * @requires @react-native-async-storage/async-storage
+ * @requires react-native-maps
+ * @requires ./CustomActions
+ * 
  * @returns {React.JSX.Element}
  */
 export default function Chat({ route, navigation, database, storage, isConnected }) {
