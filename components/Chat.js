@@ -44,7 +44,7 @@ import CustomActions from './CustomActions';
 /**
  * @typedef {Object} ChatProps
  * @property {ChatRouteProp} route
- * @property {Object} navigation
+ * @property {import('@react-navigation/native').NavigationProp<any>} navigation
  * @property {Firestore} database
  * @property {Storage} storage
  * @property {Boolean} isConnected
