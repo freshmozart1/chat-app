@@ -101,10 +101,11 @@ export default function App() {
     /**
      * Opens the chat screen with the provided route and navigation props.
      *
+     * @function openChat
      * @param {Object} props - The parameters for the function.
      * @param {Object} props.route - The route object containing navigation information.
-     * @param {Object} props.navigation - The navigation object for navigating between screens.
-     * @returns {JSX.Element} The Chat component with the provided props.
+     * @param {any} props.navigation - The navigation object for navigating between screens.
+     * @returns {React.JSX.Element} The Chat component with the provided props.
      */
     function openChat({ route, navigation }) {
         return (
@@ -112,11 +113,25 @@ export default function App() {
         );
     }
 
+    /**
+     * Navigates to the Start component, passing the Firebase app instance and navigation object as props.
+     *
+     * @function openStart
+     * @param {Object} params - The parameters object.
+     * @param {any} params.navigation - The navigation object used for navigating between screens.
+     * @returns {React.JSX.Element} The Start component with the provided props.
+     */
+    function openStart({ navigation }) {
+        return (
+            <Start fbApp={fbApp} navigation={navigation} />
+        );
+    }
+
     return (
         <NavigationContainer>
             <Stack.Navigator initialRouteName='Start'>
                 <Stack.Screen name='Start' options={{ headerShown: false }}>
-                    {props => <Start fbApp={fbApp} {...props} />}
+                    {props => openStart(props)}
                 </Stack.Screen>
                 <Stack.Screen name='Chat'>
                     {props => openChat(props)}
