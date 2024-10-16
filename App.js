@@ -18,12 +18,15 @@ const Stack = createNativeStackNavigator(); // TODO: #8 Move this into the compo
  * The main application component that initializes Firebase, sets up network status monitoring,
  * and configures the navigation stack.
  *
- * @returns {JSX.Element} The main application component with navigation setup.
+ * @public
+ * @function App
+ * @returns {React.ReactElement} The main application component with navigation setup.
  */
 export default function App() {
     /**
      * Firebase configuration object containing keys and identifiers for the app.
      * 
+     * @private
      * @constant {import('firebase/app').FirebaseOptions} firebaseConfig
      */
     const firebaseConfig = {
@@ -36,23 +39,27 @@ export default function App() {
         measurementId: process.env.FB_MEASUREMENT_ID
     };
     /**
+     * @private
      * @typedef {import('firebase/analytics').Analytics} Analytics
      * @type {[Analytics|null, React.Dispatch<React.SetStateAction<Analytics>>]} analytics - The current state of analytics data and a function to update it.
      */
     const [analytics, setAnalytics] = React.useState(null);
 
     /**
+     * @private
      * @constant {import('@react-native-community/netinfo').NetInfoState} connectionStatus - The current network connection status.
      */
     const connectionStatus = useNetInfo();
 
 
     /**
+     * @private
      * @type {import('firebase/app').FirebaseApp} fbApp - The Firebase application instance.
      */
     let fbApp;
 
     /**
+     * @private
      * @type {import('firebase/auth').Auth} fbAuth - The Firebase authentication instance.
      */
     let fbAuth;
@@ -61,6 +68,7 @@ export default function App() {
      * A reference to the Firebase Realtime Database for messages.
      * This variable is used to interact with the messages stored in the Firebase database.
      * 
+     * @private
      * @type {Firestore}
      */
     let fbMsgDb;
@@ -69,6 +77,7 @@ export default function App() {
     /**
      * A variable to hold a reference to Firebase Storage.
      * 
+     * @private
      * @type {import('firebase/storage').FirebaseStorage}
      */
     let fbStorage;
@@ -101,6 +110,7 @@ export default function App() {
     /**
      * Opens the chat screen with the provided route and navigation props.
      *
+     * @private
      * @function openChat
      * @param {Object} props - The parameters for the function.
      * @param {Object} props.route - The route object containing navigation information.
@@ -116,6 +126,7 @@ export default function App() {
     /**
      * Navigates to the Start component, passing the Firebase app instance and navigation object as props.
      *
+     * @private
      * @function openStart
      * @param {Object} params - The parameters object.
      * @param {any} params.navigation - The navigation object used for navigating between screens.
