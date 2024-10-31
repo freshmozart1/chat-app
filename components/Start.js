@@ -29,6 +29,7 @@ export default function Start({ navigation, fbApp }) {
      * @constant {string[]} colors - An array of color hex codes that can be selected as the background color of the chat screen.
      */
     const colors = ['#090C08', '#474056', '#8A95A5', '#B9C6AE'];
+    const colorNames = ['black', 'dark violet', 'grey', 'green'];
 
     /**
      * @constant {[string, React.Dispatch<React.SetStateAction<string>>]} selectedColor - The current selected background color and a function to update it.
@@ -285,20 +286,20 @@ export default function Start({ navigation, fbApp }) {
                     <Animated.Text style={[styles.appTitle, { fontSize: animateTitleFontSize }]}>Talk with everyone</Animated.Text>
                 </Animated.View>
                 <Animated.View style={[styles.inputContainer, { height: animateInputContainerHeight, width: animateInputContainerWidth, marginBottom: animateInputContainerMargin }]}>
-                    <TextInput style={styles.textInput} placeholder='Enter your name' value={name} onChangeText={setName} />
+                    <TextInput style={styles.textInput} accessible={true} accessibilityLabel='Enter your name' placeholder='Enter your name' value={name} onChangeText={setName} />
                     <View style={styles.backgroundColorContainer}>
                         <Text style={styles.backgroundColorLabel}>Choose your background color</Text>
                         <View style={styles.backgroundColorCircleContainer}>
                             {colors.map((color, index) => {
                                 return (
-                                    <TouchableHighlight key={index} underlayColor='white' onPress={() => setSelectedColor(color)}>
+                                    <TouchableHighlight accessible={true} key={index} accessibilityLabel={colorNames[index]} accessibilityHint='Choose your chat backround color' underlayColor='white' onPress={() => setSelectedColor(color)}>
                                         <Circle style={{ backgroundColor: color }} touched={selectedColor === color} />
                                     </TouchableHighlight>
                                 );
                             })}
                         </View>
                     </View>
-                    <TouchableHighlight style={styles.startChattingContainer} onPress={navigateToChat}>
+                    <TouchableHighlight accessible={true} accessibilityLabel='Start chatting' accessibilityHint='Go to the chat screen' style={styles.startChattingContainer} onPress={navigateToChat}>
                         <Text style={styles.startChatting}>Start Chatting</Text>
                     </TouchableHighlight>
                 </Animated.View>

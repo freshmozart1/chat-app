@@ -152,7 +152,7 @@ export default function CustomActions({ wrapperStyle, iconTextStyle, onSend, use
             height: 26,
             marginLeft: 10,
             marginBottom: 10
-        }} onPress={onActionPress}>
+        }} onPress={onActionPress} accessible={true} accessibilityLabel="More options" accessibilityHint="Lets you choose to send an image or your location.">
             <View style={
                 [
                     {

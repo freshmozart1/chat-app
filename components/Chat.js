@@ -188,7 +188,7 @@ export default function Chat({ route, navigation, database, storage, isConnected
         }
         if (imageURL) { // The gifted chat image viewer is not working, so I decided to use a custom image viewer
             return (
-                <TouchableOpacity onPress={() => navigation.navigate('ImageView', { imageURL: imageURL })}>
+                <TouchableOpacity accessible={true} accessibilityLabel='Show image' accessibilityHint='Opens a Image in full screen' accessibilityRole='button' onPress={() => navigation.navigate('ImageView', { imageURL: imageURL })}>
                     <Image source={{ uri: imageURL }} style={{ width: 150, height: 100, borderRadius: 13, margin: 3 }} />
                 </TouchableOpacity>
             );
